@@ -98,10 +98,10 @@ The current curated report suite is defined in `approval_spectrum/configs.py`.
 ## Fidelity Notes
 
 - Match: the value-iteration environment and tabular training logic are copied from the public MONA repository.
-- Match: the PPO path reuses the public notebook's core MONA callback idea and hyperparameter shape as the scripted starting point.
+- Match: the PPO path reuses the public notebook's core MONA callback and key PPO settings (`gamma=1.0`, `ent_coef=0.05`, `clip_range=0.3`, `learning_rate=5e-5`) as the scripted starting point.
 - Divergence: this repo wraps the public Bazel-first code in a standard Python package and CLI workflow.
 - Divergence: the learned-approval experiments are new extension work, not part of the released MONA repo.
-- Approximation: the local PPO runs use smaller budgets than the paper's largest public runs, so the included results are best read as a careful pilot rather than a full-scale replication of the paper's PPO curves.
+- Approximation: the local PPO runs use smaller budgets and a shorter rollout length (`n_steps=128`) than the notebook-style public runs, so the included results are best read as a careful pilot rather than a full-scale replication of the paper's PPO curves.
 - Reproducibility note: the PPO path fixes seeds and publishes exact configs, but repeated SB3/Torch runs in this local setup still show some residual nondeterminism.
 
 ## Key Outputs
