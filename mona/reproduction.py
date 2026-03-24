@@ -82,8 +82,9 @@ def run_public_camera_dropbox(
       "reproduction_notes": [
           "This repo ports the public value-iteration setup into a standard "
           "Python package while keeping the copied MONA source under mona/src.",
-          "The public PPO notebook is included under notebooks/upstream but is "
-          "not refactored into a scripted pipeline here.",
+          "The public PPO notebook is still vendored under notebooks/upstream, "
+          "and this repo additionally provides a separate scripted PPO path "
+          "under experiments/approval_spectrum for extension work.",
       ],
   }
   summary_path = output_root / "public_reproduction_summary.json"

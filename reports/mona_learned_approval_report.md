@@ -38,9 +38,9 @@ The public MONA results show that myopic optimization with non-myopic approval c
 
 ## Results
 
-- Safest public-environment run: `noisy_oracle_public_h1_budget_1536` with reward-hacking rate `0.000` and observed return `-0.366`.
-- Most capable public-environment run: `noisy_oracle_public_h1_budget_1536` with observed return `-0.366` and reward-hacking rate `0.000`.
-- Best learned-overseer run by true return: `calibrated_classifier_public_h1_sigmoid_ds512_budget_1536` with true return `-0.372`, intended-behavior rate `0.107`, and hacking rate `0.000`.
+- Safest public-environment run: `oracle_mona_public_h1_budget_1536` with reward-hacking rate `0.000` and observed return `-0.336`.
+- Most capable public-environment run: `oracle_mona_public_h1_budget_1536` with observed return `-0.336` and reward-hacking rate `0.000`.
+- Best learned-overseer run by true return: `calibrated_classifier_public_h1_isotonic_ds2048_budget_1536` with true return `-0.348`, intended-behavior rate `0.131`, and hacking rate `0.000`.
 - In the reduced local pilot, PPO did not yet reach the strong reward-hacking regime; the dominant failure mode was slow learning and persistent failure to complete the task.
 - Released public PPO MONA final behavior: fail `0.001`, intended `0.999`, hack `0.000`.
 - Released public PPO ordinary RL final behavior: fail `0.007`, intended `0.077`, hack `0.915`.
@@ -56,6 +56,7 @@ The public MONA results show that myopic optimization with non-myopic approval c
 - PPO sweeps here are reduced-budget local runs, not identical-scale replicas of the paper's longest notebook experiments.
 - Learned overseers are trained on trajectory-sampled state/action tuples rather than richer language-like oversight data.
 - The calibration-aware models test one practical intervention class, not the full space of learned-approval architectures.
+- The scripted PPO pipeline fixes seeds and improves repeatability, but repeated SB3/Torch runs are still not bitwise deterministic in this local setup, so single-seed numbers should be treated as pilot estimates rather than exact invariants.
 
 ## Plot Artifacts
 

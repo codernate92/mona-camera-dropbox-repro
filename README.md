@@ -70,6 +70,7 @@ pytest -q
 - per-run JSON summaries under `experiments/outputs/ppo_reproduction/runs/`
 - PPO checkpoints under `experiments/outputs/ppo_reproduction/models/`
 - `experiments/outputs/ppo_reproduction/results.csv`
+- committed copies of the generated PPO plots under `reports/assets/ppo_reproduction/`
 
 `run_learned_approval_suite` writes:
 
@@ -101,6 +102,7 @@ The current curated report suite is defined in `approval_spectrum/configs.py`.
 - Divergence: this repo wraps the public Bazel-first code in a standard Python package and CLI workflow.
 - Divergence: the learned-approval experiments are new extension work, not part of the released MONA repo.
 - Approximation: the local PPO runs use smaller budgets than the paper's largest public runs, so the included results are best read as a careful pilot rather than a full-scale replication of the paper's PPO curves.
+- Reproducibility note: the PPO path fixes seeds and publishes exact configs, but repeated SB3/Torch runs in this local setup still show some residual nondeterminism.
 
 ## Key Outputs
 

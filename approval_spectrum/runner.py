@@ -148,6 +148,7 @@ def _run_single_experiment(
       env_config=env_config,
       num_rollouts_per_initial_state=3,
       deterministic=False,
+      seed=spec.seed,
   )
   result = ExperimentResult(
       name=spec.name,

@@ -39,4 +39,4 @@ python -m experiments.approval_spectrum.run_public_reproduction --output-root ex
 - Match: copied environment, training, rollout, and file-handling logic from the public MONA repo.
 - Match: reproduced the public value-iteration Camera Dropbox configuration.
 - Divergence: packaged the code as a normal Python project instead of relying on Bazel as the primary entrypoint.
-- Divergence: kept the public PPO notebook under `notebooks/upstream/ppo.ipynb` but did not convert it into a scripted experiment runner.
+- Divergence: kept the public PPO notebook under `notebooks/upstream/ppo.ipynb`, and added a separate scripted PPO path under `experiments/approval_spectrum/` for extension work.

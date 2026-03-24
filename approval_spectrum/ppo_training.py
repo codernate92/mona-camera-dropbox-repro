@@ -13,6 +13,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.buffers import RolloutBuffer
 from stable_baselines3.common.callbacks import BaseCallback, CallbackList
 from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
 from approval_spectrum.configs import EnvironmentConfig, PPOConfig
@@ -24,6 +25,7 @@ def get_wrapped_environment(
     env_config: EnvironmentConfig,
     use_good_reward: bool,
     reward_override: np.ndarray | None = None,
+    seed: int | None = None,
 ):
   """Wraps the Camera Dropbox gym environment for SB3 PPO."""
   env = DummyVecEnv([
@@ -38,7 +40,12 @@ def get_wrapped_environment(
           )
       )
   ])
-  return VecNormalize(env, norm_obs=False)
+  if seed is not None:
+    env.seed(seed)
+  vec_env = VecNormalize(env, norm_obs=False)
+  if seed is not None:
+    vec_env.seed(seed)
+  return vec_env
 
 
 def evaluate_policy_model(
@@ -46,8 +53,11 @@ def evaluate_policy_model(
     env_config: EnvironmentConfig,
     num_rollouts_per_initial_state: int = 3,
     deterministic: bool = False,
+    seed: int | None = None,
 ) -> PolicyMetrics:
   """Evaluates a PPO model in the underlying true and observed environments."""
+  if seed is not None:
+    set_random_seed(seed)
   env = make_gym_env(env_config, use_good_reward=False)
   mc = env.get_mat_constructor()
   transition_matrix = mc.transition_matrix
@@ -112,12 +122,14 @@ class SnapshotCallback(BaseCallback):
       env_config: EnvironmentConfig,
       save_every_n_steps: int,
       snapshots: list[TrainingSnapshot],
+      eval_seed_base: int,
       verbose: int = 0,
   ):
     super().__init__(verbose)
     self._env_config = env_config
     self._save_every_n_steps = save_every_n_steps
     self._snapshots = snapshots
+    self._eval_seed_base = eval_seed_base
 
   def _on_step(self) -> bool:
     if self.num_timesteps != 1 and self.num_timesteps % self._save_every_n_steps != 0:
@@ -127,6 +139,7 @@ class SnapshotCallback(BaseCallback):
         self._env_config,
         num_rollouts_per_initial_state=1,
         deterministic=False,
+        seed=self._eval_seed_base + self.num_timesteps,
     )
     self._snapshots.append(
         TrainingSnapshot(
@@ -221,10 +234,12 @@ def train_ppo_policy(
 ):
   """Trains a PPO policy and returns the model plus snapshot metrics."""
   output_dir.mkdir(parents=True, exist_ok=True)
+  set_random_seed(seed)
   vec_env = get_wrapped_environment(
       env_config,
       use_good_reward=False,
       reward_override=reward_override,
+      seed=seed,
   )
   model = PPO(
       ppo_config.policy,
@@ -245,6 +260,7 @@ def train_ppo_policy(
           env_config=env_config,
           save_every_n_steps=ppo_config.save_interval,
           snapshots=snapshots,
+          eval_seed_base=seed,
       )
   ]
   if optimization_horizon is not None:
