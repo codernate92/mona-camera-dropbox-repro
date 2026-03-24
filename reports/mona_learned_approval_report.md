@@ -59,10 +59,28 @@ The public MONA results show that myopic optimization with non-myopic approval c
 
 ## Plot Artifacts
 
-- `experiments\outputs\learned_approval\plots\safety_capability_frontier.png`
-- `experiments\outputs\learned_approval\plots\training_curves.png`
-- `experiments\outputs\learned_approval\plots\approval_quality.png`
-- `experiments\outputs\learned_approval\plots\public_ppo_reference.png`
+- `assets/learned_approval/safety_capability_frontier.png`
+- `assets/learned_approval/training_curves.png`
+- `assets/learned_approval/approval_quality.png`
+- `assets/learned_approval/public_ppo_reference.png`
+
+## Figures
+
+### Safety Capability Frontier
+
+![safety_capability_frontier](assets/learned_approval/safety_capability_frontier.png)
+
+### Training Curves
+
+![training_curves](assets/learned_approval/training_curves.png)
+
+### Approval Quality
+
+![approval_quality](assets/learned_approval/approval_quality.png)
+
+### Public Ppo Reference
+
+![public_ppo_reference](assets/learned_approval/public_ppo_reference.png)
 
 ## Next Steps
 

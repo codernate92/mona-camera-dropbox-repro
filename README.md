@@ -78,6 +78,7 @@ pytest -q
 - PPO checkpoints under `experiments/outputs/learned_approval/models/`
 - `experiments/outputs/learned_approval/results.csv`
 - plots under `experiments/outputs/learned_approval/plots/`
+- committed copies of those plots under `reports/assets/learned_approval/`
 - `reports/mona_learned_approval_report.md`
 
 ## Experiment Surface
@@ -105,8 +106,14 @@ The current curated report suite is defined in `approval_spectrum/configs.py`.
 
 - Reproduction notes: `reports/public_reproduction_notes.md`
 - Learned-approval memo: `reports/mona_learned_approval_report.md`
-- Public PPO comparison plot: `experiments/outputs/learned_approval/plots/public_ppo_reference.png`
-- Safety/capability frontier plot: `experiments/outputs/learned_approval/plots/safety_capability_frontier.png`
+- Public PPO comparison plot: `reports/assets/learned_approval/public_ppo_reference.png`
+- Safety/capability frontier plot: `reports/assets/learned_approval/safety_capability_frontier.png`
+
+## Visuals
+
+![Safety capability frontier](reports/assets/learned_approval/safety_capability_frontier.png)
+
+![Public PPO reference comparison](reports/assets/learned_approval/public_ppo_reference.png)
 
 ## Current Takeaway
 

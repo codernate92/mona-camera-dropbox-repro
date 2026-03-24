@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import json
 from pathlib import Path
+import shutil
 
 import numpy as np
 
@@ -107,6 +108,17 @@ def _write_results_csv(results: list[ExperimentResult], path: Path) -> None:
     writer.writerows(rows)
 
 
+def _publish_plot_assets(plot_paths: list[Path], suite_name: str) -> list[Path]:
+  asset_dir = _project_root() / "reports" / "assets" / suite_name
+  asset_dir.mkdir(parents=True, exist_ok=True)
+  published_paths = []
+  for plot_path in plot_paths:
+    destination = asset_dir / plot_path.name
+    shutil.copy2(plot_path, destination)
+    published_paths.append(destination)
+  return published_paths
+
+
 def _run_single_experiment(
     spec: ExperimentSpec,
     output_root: Path,
@@ -188,7 +200,15 @@ def _write_report(results: list[ExperimentResult], plot_paths: list[Path]) -> Pa
         "mona_final_pct": (mona_final / mona_final.sum()).tolist(),
         "ordinary_final_pct": (ordinary_final / ordinary_final.sum()).tolist(),
     }
-  plot_lines = "\n".join(f"- `{path}`" for path in plot_paths)
+  relative_plot_paths = [path.relative_to(report_path.parent) for path in plot_paths]
+  plot_lines = "\n".join(f"- `{path.as_posix()}`" for path in relative_plot_paths)
+  figure_blocks = "\n\n".join(
+      [
+          f"### {path.stem.replace('_', ' ').title()}\n\n"
+          f"![{path.stem}]({path.as_posix()})"
+          for path in relative_plot_paths
+      ]
+  )
   public_reference_lines = ""
   if public_reference_summary is not None:
     public_reference_lines = (
@@ -258,6 +278,10 @@ The public MONA results show that myopic optimization with non-myopic approval c
 
 {plot_lines}
 
+## Figures
+
+{figure_blocks}
+
 ## Next Steps
 
 - Push the scripted PPO runs to larger budgets and multiple seeds.
@@ -298,13 +322,15 @@ def _run_suite(
             plot_dir,
         )
     )
+  published_plot_paths = _publish_plot_assets(plot_paths, output_root.name)
   summary = {
       "results_csv": str(results_csv),
       "plot_paths": [str(path) for path in plot_paths],
+      "published_plot_paths": [str(path) for path in published_plot_paths],
       "num_experiments": len(results),
   }
   if write_report:
-    report_path = _write_report(results, plot_paths)
+    report_path = _write_report(results, published_plot_paths)
     summary["report_path"] = str(report_path)
   _write_json(output_root / "summary.json", summary)
   return summary
