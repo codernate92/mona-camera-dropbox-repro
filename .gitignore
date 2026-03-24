@@ -6,4 +6,6 @@ __pycache__/
 build/
 dist/
 data/
+!data/public_ppo_reference/
+!data/public_ppo_reference/*.npy
 experiments/outputs/

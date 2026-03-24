@@ -13,9 +13,14 @@ authors = [{name = "Codernate92 contributors"}]
 dependencies = [
   "absl-py>=2.1.0",
   "frozendict>=2.4.6",
+  "gymnasium>=1.0.0",
+  "matplotlib>=3.9",
   "numpy>=2.2.1",
   "protobuf>=5.29.3",
+  "scikit-learn>=1.6",
+  "stable-baselines3>=2.5.0",
   "sympy>=1.13.3",
+  "tqdm>=4.67",
 ]
 
 [project.optional-dependencies]
@@ -25,7 +30,7 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["mona*", "experiments*"]
+include = ["approval_spectrum*", "mona*", "experiments*"]
 
 [tool.pytest.ini_options]
 minversion = "8.0"
