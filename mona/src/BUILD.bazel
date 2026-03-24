@@ -1,0 +1,200 @@
+load("@mona_deps//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+package(default_visibility = ["//:__subpackages__"])
+
+py_library(
+    name = "train",
+    srcs = ["train.py"],
+    deps = [
+        ":data",
+        ":matrix_constructor",
+        ":policy_constructor",
+        ":state",
+    ],
+)
+
+py_binary(
+    name = "main",
+    srcs = ["main.py"],
+    deps = [
+        ":file_handler",
+        ":matrix_constructor",
+        ":policy_constructor",
+        ":rollout_handler",
+        ":runner",
+        ":state",
+        "@abseil-py//absl:app",
+        "@abseil-py//absl/flags",
+    ],
+)
+
+py_test(
+    name = "train_test",
+    srcs = ["train_test.py"],
+    deps = [
+        ":state",
+        ":train",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "block_push_env",
+    srcs = ["block_push_env.py"],
+    deps = [
+        ":data",
+        ":state",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "block_push_env_test",
+    srcs = ["block_push_env_test.py"],
+    deps = [
+        ":block_push_env",
+        ":state",
+        requirement("numpy"),
+        requirement("pytest"),
+    ],
+)
+
+py_library(
+    name = "data",
+    srcs = ["data.py"],
+)
+
+py_library(
+    name = "runner",
+    srcs = ["runner.py"],
+    deps = [
+        ":file_handler",
+        ":matrix_constructor",
+        ":policy_constructor",
+        ":rollout_handler",
+        ":train",
+    ],
+)
+
+py_test(
+    name = "runner_test",
+    srcs = ["runner_test.py"],
+    deps = [
+        ":runner",
+        requirement("pytest"),
+    ],
+)
+
+py_library(
+    name = "state",
+    srcs = ["state.py"],
+    deps = [
+        ":data",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "state_test",
+    srcs = ["state_test.py"],
+    deps = [
+        ":state",
+        requirement("numpy"),
+    ],
+)
+
+py_library(
+    name = "matrix_constructor",
+    srcs = ["matrix_constructor.py"],
+    deps = [
+        ":block_push_env",
+        ":data",
+        ":state",
+        requirement("frozendict"),
+        requirement("sympy"),
+    ],
+)
+
+py_library(
+    name = "file_handler",
+    srcs = ["file_handler.py"],
+    deps = [
+        ":file_system",
+        ":state",
+        "//proto:rollout_py_pb2",
+    ],
+)
+
+py_library(
+    name = "rollout_handler",
+    srcs = ["rollout_handler.py"],
+    deps = [
+        ":matrix_constructor",
+        ":policy_constructor",
+        "//proto:rollout_py_pb2",
+    ],
+)
+
+py_library(
+    name = "policy_constructor",
+    srcs = ["policy_constructor.py"],
+    deps = [
+        ":data",
+    ],
+)
+
+py_library(
+    name = "file_system",
+    srcs = ["file_system.py"],
+)
+
+py_test(
+    name = "policy_constructor_test",
+    srcs = ["policy_constructor_test.py"],
+    deps = [
+        ":policy_constructor",
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "matrix_constructor_test",
+    srcs = ["matrix_constructor_test.py"],
+    deps = [
+        ":matrix_constructor",
+    ],
+)
+
+py_test(
+    name = "rollout_handler_test",
+    srcs = ["rollout_handler_test.py"],
+    deps = [
+        ":matrix_constructor",
+        ":policy_constructor",
+        ":rollout_handler",
+        ":state",
+        ":train",
+        "//proto:rollout_py_pb2",
+    ],
+)
+
+py_library(
+    name = "block_push_gym_env",
+    srcs = ["block_push_gym_env.py"],
+    deps = [
+        ":data",
+        ":matrix_constructor",
+        ":state",
+        requirement("gymnasium"),
+        requirement("numpy"),
+    ],
+)
+
+py_test(
+    name = "block_push_gym_env_test",
+    srcs = ["block_push_gym_env_test.py"],
+    deps = [
+        ":block_push_gym_env",
+    ],
+)
