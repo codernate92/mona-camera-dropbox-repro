@@ -95,12 +95,25 @@ The learned-approval suite currently sweeps:
 
 The current curated report suite is defined in `approval_spectrum/configs.py`.
 
+## PPO Stack
+
+The current scripted PPO path differs materially from the original notebook-only baseline in ways that are intentional for a stronger research pipeline:
+
+- policy architecture: custom `CnnPolicy` feature extractor over channel-first 2D board observations
+- vectorization: `SubprocVecEnv` with `4` parallel workers by default
+- reward processing: `VecNormalize(norm_obs=False, norm_reward=True)` so PPO updates see normalized combined environment-plus-approval rewards
+- observation handling: categorical grid observations are converted into spatial feature planes without observation normalization
+- MONA rollout handling: the callback repacks vectorized rollouts into horizon-limited subepisodes while preserving timestep-level reward alignment
+
+There is an explicit temporal-alignment test in `tests/test_ppo_training.py` checking that the reward attached to `(S_t, A_t)` stays attached to that exact timestep after MONA subepisode extraction.
+
 ## Fidelity Notes
 
 - Match: the value-iteration environment and tabular training logic are copied from the public MONA repository.
 - Match: the PPO path reuses the public notebook's core MONA callback and key PPO settings (`gamma=1.0`, `ent_coef=0.05`, `clip_range=0.3`, `learning_rate=5e-5`) as the scripted starting point.
 - Divergence: this repo wraps the public Bazel-first code in a standard Python package and CLI workflow.
 - Divergence: the learned-approval experiments are new extension work, not part of the released MONA repo.
+- Divergence: the scripted PPO path now uses a custom CNN torso, parallel environments, and explicit reward normalization rather than a single-environment flat-observation setup.
 - Approximation: the local PPO runs use smaller budgets and a shorter rollout length (`n_steps=128`) than the notebook-style public runs, so the included results are best read as a careful pilot rather than a full-scale replication of the paper's PPO curves.
 - Reproducibility note: the PPO path fixes seeds and publishes exact configs, but repeated SB3/Torch runs in this local setup still show some residual nondeterminism.
 

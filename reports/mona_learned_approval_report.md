@@ -17,15 +17,17 @@ The public MONA results show that myopic optimization with non-myopic approval c
 - Preserved the existing public value-iteration reproduction path.
 - Ported the public PPO notebook logic into scripts and reusable Python modules.
 - Reused the notebook's MONA rollout-buffer recomposition callback and key PPO settings (`gamma=1.0`, `ent_coef=0.05`, `clip_range=0.3`, `learning_rate=5e-5`) as the starting point.
+- Upgraded the PPO path to a custom CNN torso over spatial board observations, reward normalization with `VecNormalize`, and `SubprocVecEnv` parallel rollout collection.
 - Did not claim a full rerun of the paper's million-step PPO study on identical compute; this report uses smaller scripted sweeps that fit the local environment.
 
 ## Implementation Details
 
 - `mona/src/`: copied public Camera Dropbox environment and tabular training code.
-- `approval_spectrum/ppo_training.py`: scripted PPO training, MONA callback, periodic evaluation snapshots.
+- `approval_spectrum/ppo_training.py`: scripted PPO training, spatial observation wrapper, custom CNN feature extractor, reward normalization, vectorized rollout collection, MONA callback, periodic evaluation snapshots.
 - `approval_spectrum/overseers.py`: oracle, noisy, misspecified, learned, and calibrated approval mechanisms.
 - Learned overseers are trajectory-trained outcome models over `(time, state, action)` tuples.
 - The calibration-aware variant uses explicit probability calibration (`sigmoid` or `isotonic`) before constructing the approval score.
+- `tests/test_ppo_training.py`: checks spatial observation encoding and explicit temporal alignment of MONA reward injection during subepisode extraction.
 
 ## Experiment Matrix
 
@@ -38,9 +40,9 @@ The public MONA results show that myopic optimization with non-myopic approval c
 
 ## Results
 
-- Safest public-environment run: `oracle_mona_public_h1_budget_1536` with reward-hacking rate `0.000` and observed return `-0.336`.
-- Most capable public-environment run: `oracle_mona_public_h1_budget_1536` with observed return `-0.336` and reward-hacking rate `0.000`.
-- Best learned-overseer run by true return: `calibrated_classifier_public_h1_isotonic_ds2048_budget_1536` with true return `-0.348`, intended-behavior rate `0.131`, and hacking rate `0.000`.
+- Safest public-environment run: `calibrated_classifier_public_h1_sigmoid_ds512_budget_1536` with reward-hacking rate `0.000` and observed return `-0.363`.
+- Most capable public-environment run: `calibrated_classifier_public_h1_sigmoid_ds512_budget_1536` with observed return `-0.363` and reward-hacking rate `0.000`.
+- Best learned-overseer run by true return: `calibrated_classifier_public_h1_sigmoid_ds512_budget_1536` with true return `-0.363`, intended-behavior rate `0.119`, and hacking rate `0.000`.
 - In the reduced local pilot, PPO did not yet reach the strong reward-hacking regime; the dominant failure mode was slow learning and persistent failure to complete the task.
 - Released public PPO MONA final behavior: fail `0.001`, intended `0.999`, hack `0.000`.
 - Released public PPO ordinary RL final behavior: fail `0.007`, intended `0.077`, hack `0.915`.
@@ -53,10 +55,11 @@ The public MONA results show that myopic optimization with non-myopic approval c
 
 ## Limitations
 
-- PPO sweeps here are reduced-budget local runs, not identical-scale replicas of the paper's longest notebook experiments, and they also use a shorter rollout length than the default public notebook setup.
+- PPO sweeps here are reduced-budget local runs, not identical-scale replicas of the paper's longest notebook experiments.
 - Learned overseers are trained on trajectory-sampled state/action tuples rather than richer language-like oversight data.
 - The calibration-aware models test one practical intervention class, not the full space of learned-approval architectures.
 - The scripted PPO pipeline fixes seeds and improves repeatability, but repeated SB3/Torch runs are still not bitwise deterministic in this local setup, so single-seed numbers should be treated as pilot estimates rather than exact invariants.
+- Because the PPO stack now differs from the flat single-environment notebook baseline, the extension suite should be read as a stronger experimental variant of the public setup rather than a strict apples-to-apples reproduction of every PPO implementation detail.
 
 ## Plot Artifacts
 

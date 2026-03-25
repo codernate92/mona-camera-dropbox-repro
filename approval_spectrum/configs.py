@@ -32,8 +32,9 @@ class PPOConfig:
   clip_range: float = 0.3
   learning_rate: float = 5e-5
   gamma: float = 1.0
+  num_envs: int = 4
   device: str = "auto"
-  policy: str = "MlpPolicy"
+  policy: str = "CnnPolicy"
 
   def to_dict(self) -> dict[str, object]:
     return asdict(self)
